@@ -10,63 +10,68 @@ print("O(n²):", round(time.time() - start, 5), "seconds")
 from models.book import Book
 from models.user import User
 from typing import List, Optional
-
-class Library:
-    def __init__(self, books: List[Book]=None, users: List[User]=None):
-        self.books = books or []
-        self.users = users or []
-
-    def add_book(self, book: Book):
-        if self.find_book_by_isbn(book.isbn):
-            raise ValueError("Book with the same ISBN already exists.")
-        self.books.append(book)
-
-    def find_book_by_isbn(self, isbn: str) -> Optional[Book]:
-        for b in self.books:
-            if b.isbn == isbn:
-                return b
-        return None
-
-    def list_available_books(self):
-        return [b for b in self.books if b.is_available]
-
-    def search_books(self, query: str):
-        q = query.lower()
-        return [b for b in self.books if q in b.title.lower() or q in b.author.lower()]
-
-    def add_user(self, user: User):
-        if self.find_user_by_id(user.id):
-            raise ValueError("User with the same ID already exists.")
-        self.users.append(user)
-
-    def find_user_by_id(self, user_id: str) -> Optional[User]:
-        for u in self.users:
-            if u.id == user_id:
-                return u
-        return None
-
-    def borrow_book(self, user_id: str, book_isbn: str) -> str:
-        user = self.find_user_by_id(user_id)
-        if not user:
-            return "User not found."
-        book = self.find_book_by_isbn(book_isbn)
-        if not book:
-            return "Book not found."
-        if not book.is_available:
-            return "Book already borrowed."
-        book.is_available = False
-        user.borrowed_books.append(book.isbn)
-        return f"{user.name} borrowed '{book.title}'."
-
-    def return_book(self, user_id: str, book_isbn: str) -> str:
-        user = self.find_user_by_id(user_id)
-        if not user:
-            return "User not found."
-        book = self.find_book_by_isbn(book_isbn)
-        if not book:
-            return "Book not found."
-        if book_isbn not in user.borrowed_books:
-            return "This user did not borrow that book."
-        user.borrowed_books.remove(book_isbn)
-        book.is_available = True
         return f"{user.name} returned '{book.title}'."
+        
+        <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📚 Library Management</h1>
+
+        <section>
+            <h2>Available Books</h2>
+            {% if books %}
+                <ul>
+                    {% for book in books %}
+                        <li>
+                            <strong>{{ book.title }}</strong> by {{ book.author }} ({{ book.isbn }})
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No books available.</p>
+            {% endif %}
+        </section>
+
+        <section>
+            <h2>Add New Book</h2>
+            <form method="POST" action="/add_book">
+                <input type="text" name="title" placeholder="Title" required>
+                <input type="text" name="author" placeholder="Author" required>
+                <input type="text" name="isbn" placeholder="ISBN" required>
+                <button type="submit">Add Book</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Add New User</h2>
+            <form method="POST" action="/add_user">
+                <input type="text" name="name" placeholder="Name" required>
+                <input type="text" name="id" placeholder="User ID" required>
+                <button type="submit">Add User</button>
+            </form>
+        </section>
+
+        <section>
+            <h2>Borrow / Return Book</h2>
+            <form method="POST" action="/borrow">
+                <input type="text" name="user_id" placeholder="User ID" required>
+                <input type="text" name="isbn" placeholder="Book ISBN" required>
+                <button type="submit">Borrow</button>
+            </form>
+
+            <form method="POST" action="/return">
+                <input type="text" name="user_id" placeholder="User ID" required>
+                <input type="text" name="isbn" placeholder="Book ISBN" required>
+                <button type="submit" class="return-btn">Return</button>
+            </form>
+        </section>
+    </div>
+</body>
+</html>
+        
