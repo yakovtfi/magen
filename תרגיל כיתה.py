@@ -100,4 +100,17 @@ CHECK (BirthDate BETWEEN '1992-01-01' AND '2000-12-31');
 -- ================================
 -- 14. מחיקת טבלה students_temp
 -- ================================
-DROP TABLE students_temp;        
+DROP TABLE students_temp;      
+
+
+
+
+
+
+UPDATE students
+SET BirthDate = CONCAT(
+    SUBSTRING(BirthDate, 7, 4), '-',   
+    SUBSTRING(BirthDate, 4, 2), '-',   
+    SUBSTRING(BirthDate, 1, 2)      
+)
+WHERE BirthDate LIKE '__/__/____';
