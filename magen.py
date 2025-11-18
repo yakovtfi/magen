@@ -115,3 +115,91 @@ def main():
 
 if __name__ == "__main__":
     main()
+   
+   
+   
+   
+   
+   
+   -- ============================
+-- PART A – INSERT (1–3)
+-- ============================
+
+-- 1. Insert new students
+-- 1.1
+INSERT INTO students (Id, FullName, IdentityNumber, BirthDate, ClassId, personlId)
+VALUES (1, 'Jennifer Thomas', '999411611691', '2000-07-04', 2, NULL);
+
+-- 1.2
+INSERT INTO students (Id, FullName, IdentityNumber, BirthDate, ClassId, personlId)
+VALUES (2, 'Michael Clark', '999494918151', '1991-09-18', 4, NULL);
+
+-- 2. Insert new lecturer
+INSERT INTO lecturers (LecturerName, Email)
+VALUES ('John Smith', 'jsmith@university.edu.il');
+
+-- 3. Insert new study_hours rows
+-- 3.1
+INSERT INTO study_hours (Id, ClassId, MorningLecturerId, AfternoonLecturerId)
+VALUES (1, 13, 42, 38);
+
+-- 3.2
+INSERT INTO study_hours (Id, ClassId, MorningLecturerId, AfternoonLecturerId)
+VALUES (2, 38, 17, 25);
+
+
+
+-- ============================
+-- PART B – SELECT (4–6)
+-- ============================
+
+-- 4. Show all columns & rows from classes
+SELECT * FROM classes;
+
+-- 5. Show all lecturers whose names start with 'M'
+SELECT LecturerName
+FROM lecturers
+WHERE LecturerName LIKE 'M%';
+
+-- 6. Show students ordered by:
+-- first: BirthDate DESC (from youngest)
+-- then: FullName ASC
+SELECT FullName
+FROM students
+ORDER BY BirthDate DESC, FullName ASC;
+
+
+
+-- ============================
+-- PART C – UPDATE (8–10)
+-- ============================
+
+-- 8. Update student name where IdentityNumber = '999160426740'
+UPDATE students
+SET FullName = 'James Smith'
+WHERE IdentityNumber = '999160426740';
+
+-- 9. Update all lecturers with email = NULL → set default email
+UPDATE lecturers
+SET Email = 'noemail@school.com'
+WHERE Email IS NULL;
+
+-- 10. Update age of all students
+-- (Assuming table has Age column)
+UPDATE students
+SET Age = YEAR(CURDATE()) - YEAR(BirthDate);
+
+
+
+-- ============================
+-- PART D – DELETE (11–12)
+-- ============================
+
+-- 11. Delete study_hours where ClassId > 4
+DELETE FROM study_hours
+WHERE ClassId > 4;
+
+-- 12. Delete student named "Laura Brown"
+DELETE FROM students
+WHERE FullName = 'Laura Brown';
+   
