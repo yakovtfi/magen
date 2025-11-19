@@ -202,4 +202,122 @@ WHERE ClassId > 4;
 -- 12. Delete student named "Laura Brown"
 DELETE FROM students
 WHERE FullName = 'Laura Brown';
+
+
+
+
+
+
+/* ============================================
+   חלק א – UNION (איחוד לאורך)
+   ============================================ */
+
+/* 1. יצירת הטבלאות החדשות (מבנה דוגמה – מתאים לקבצים) */
+1.
+CREATE TABLE students_new (
+    Id INT,
+    FullName VARCHAR(80),
+    BirthDate DATE,
+    ClassId INT
+);
+
+2.
+CREATE TABLE courses_new (
+    Id INT,
+    CourseName VARCHAR(80)
+);
+
+3.
+CREATE TABLE lecturers_new (
+    Id INT,
+    LecturerName VARCHAR(80)
+);
+
+
+/* ============================================
+   איחוד רשימת המרצים
+   ============================================ */
+
+/* 4. רשימה עם כפילויות – UNION ALL */
+4.
+SELECT LecturerName
+FROM lecturers
+UNION ALL
+SELECT LecturerName
+FROM lecturers_new;
+
+/* 5. רשימה ייחודית – UNION */
+5.
+SELECT LecturerName
+FROM lecturers
+UNION
+SELECT LecturerName
+FROM lecturers_new;
+
+/* 6. שמירה של רשימת מרצים ייחודית בטבלה lecturers */
+6.
+TRUNCATE TABLE lecturers;
+
+INSERT INTO lecturers (LecturerName)
+SELECT LecturerName FROM (
+    SELECT LecturerName FROM lecturers
+    UNION
+    SELECT LecturerName FROM lecturers_new
+) AS t;
+
+
+/* ============================================
+   איחוד תלמידים
+   ============================================ */
+
+/* 7. איחוד תלמידים (אם המבנים זהים) */
+7.
+SELECT * FROM students
+UNION ALL
+SELECT * FROM students_new;
+
+
+/* ============================================
+   איחוד קורסים
+   ============================================ */
+
+/* 8. איחוד קורסים */
+8.
+SELECT * FROM courses
+UNION
+SELECT * FROM courses_new;
+
+
+
+/* ============================================
+   חלק ב – JOIN (העשרת נתונים לרוחב)
+   ============================================ */
+
+/* 9. INNER JOIN – תלמיד + כיתה + קורס */
+9.
+SELECT 
+    s.FullName AS StudentName,
+    c.ClassName,
+    cr.CourseName
+FROM students s
+INNER JOIN classes c ON s.ClassId = c.Id
+INNER JOIN courses cr ON c.CourseId = cr.Id;
+
+
+/* 10. LEFT JOIN – מרצים ללא שיבוץ */
+10.
+SELECT l.LecturerName
+FROM lecturers l
+LEFT JOIN classes c1 ON l.Id = c1.MorningLecturerId
+LEFT JOIN classes c2 ON l.Id = c2.AfternoonLecturerId
+WHERE c1.Id IS NULL AND c2.Id IS NULL;
+
+
+/* 11. JOIN שרשורי – קורסים ללא תלמידים */
+11.
+SELECT DISTINCT cr.CourseName
+FROM courses cr
+LEFT JOIN classes c ON cr.Id = c.CourseId
+LEFT JOIN students s ON s.ClassId = c.Id
+WHERE s.Id IS NULL;
    
